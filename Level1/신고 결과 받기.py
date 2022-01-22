@@ -1,31 +1,26 @@
+from collections import defaultdict
+
+
 def solution(id_list, report, k):
+    answer = [0] * len(id_list)
     report = set(report)
-    who_declared = {}
-    who_declare_who = {}
-    stop_id = []
-    answer = []
-    for i in id_list:
-        who_declared[i] = 0
-        who_declare_who[i] = []
-    # 신고를 당한 횟수 리스트 만들기
-    for de in report:
-        de = de.split(" ")
-        user = de[0]
-        survey = de[1]
-        who_declared[survey] += 1
-        who_declare_who[user] += [survey]
-    # 정지되는 ID 리스트 만들기
-    for key, value in who_declared.items():
-        if value >= k:
-            stop_id.append(key)
-    for key, value in who_declare_who.items():
-        stop_id.sort()
-        value.sort()
-        if value == stop_id and len(stop_id) >= k:
-            answer.append(len(value))
-        elif for i in value:
-            if i in stop_id:
-                answer.append(len(value))
-        else:
-            answer.append(0)
+
+    user_list_who_i_report = defaultdict(set)
+    num_of_reported = defaultdict(int)
+    suspended = []
+
+    for r in report:
+        do_report, be_reported = r.split()
+
+        num_of_reported[be_reported] += 1
+        user_list_who_i_report[do_report].add(be_reported)
+
+        if num_of_reported[be_reported] == k:
+            suspended.append(be_reported)
+
+    for s in suspended:
+        for i in range(len(id_list)):
+            if s in user_list_who_i_report[id_list[i]]:
+                answer[i] += 1
+
     return answer
